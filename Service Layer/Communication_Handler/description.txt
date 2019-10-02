@@ -1,0 +1,1 @@
+handle communication of bluetooth and eeprom
