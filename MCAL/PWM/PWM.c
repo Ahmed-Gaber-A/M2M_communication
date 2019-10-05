@@ -1,0 +1,56 @@
+/*
+ * PWM.c
+ *
+ *  Created on: Oct 2, 2019
+ *      Author: hp
+ */
+
+#include "PWM.h"
+#define PWM1_ENABEL 0x00100000
+#define PWM_ALTERNATE_PIN 0x00005000
+#define Percentage 1/100
+#define PORTF_PCTL_CONFIGURE 0x0000F000
+#define PWM1_CTL_DISABLE
+void PWM_Init(void)
+{
+    SYSCTL_RCGCPWM_R |= 2;
+    SYSCTL_RCC_R |= PWM1_ENABEL;
+    Alternate_GPIO_Select(GPIO_PORTF_DATA_BITS_R,GPIO_PIN3);
+    GPIO_PORTF_PCTL_R &= ~ PORTF_PCTL_CONFIGURE;
+    GPIO_PORTF_PCTL_R |= PWM_ALTERNATE_PIN;
+    GPIO_PORTF_DEN_R |=8;
+    PWM1_3_CTL_R = 0x00000000;
+    PWM1_3_GENB_R = 0x0000008C;
+    PWM1_3_LOAD_R = PWM_LOAD_VALUE;
+    PWM1_3_CMPA_R = (PWM_INIT_DUTY * PWM_INIT_DUTY * Percentage);
+    PWM1_3_CTL_R = PWM_1_CTL_ENABLE;
+    PWM1_ENABLE_R = 0x00000080;
+}
+void PWM_DutyCycle(uint16_t duty)
+{
+    if(PWM1_3_CMPA_R<PWM1_3_LOAD_R)
+    {
+        PWM1_3_CMPA_R =PWM1_3_CMPA_R + (duty * PWM1_3_LOAD_R * Percentage);
+    }
+    else
+    {
+        PWM1_3_CMPA_R = 1;
+    }
+}
+
+
+/*{
+    SYSCTL_RCGCPWM_R |= 2;
+    SET_BIT(SYSCTL_RCGCGPIO_R,GPIO_PIN5);
+    SYSCTL_RCC_R |= PWM1_ENABEL;
+    GPIO_PORTF_AFSEL_R |= 8;
+    GPIO_PORTF_PCTL_R &= ~0x0000F000;
+    GPIO_PORTF_PCTL_R |= PWM_ALTERNATE_PIN;
+    GPIO_PORTF_DEN_R |=8;
+    PWM1_3_CTL_R = 0x00000000;
+    PWM1_3_GENB_R = 0x0000008C;
+    PWM1_3_LOAD_R = 16000;
+    PWM1_3_CMPA_R = 8000;
+    PWM1_3_CTL_R = 0x00000001;
+    PWM1_ENABLE_R = 0x00000080;
+}*/

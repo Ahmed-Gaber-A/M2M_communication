@@ -70,7 +70,7 @@ void LCD_sendCommand(uint8_t command)
     GPIO_WritePin(GPIO_PORTA_DATA_BITS_R, E, HIGH);
     Delay(610); /* delay for processing Tpw - Tdws = 190ns */
 
-    *(GPIO_PORTC_DATA_BITS_R + DATA_REGISTER_OFFSET) = ((*(GPIO_PORTC_DATA_BITS_R + DATA_REGISTER_OFFSET)) & 0x0F) | (command & 0xF0);
+    GPIO_PORTC_DATA_R = (GPIO_PORTC_DATA_R & 0x0F) | (command & 0xF0);
 
     Delay(610); /* delay for processing Tdsw = 100ns */
     /* disable LCD E=0 */
@@ -84,7 +84,7 @@ void LCD_sendCommand(uint8_t command)
 
     /* out the lowest 4 bits of the required command to the data bus D4 --> D7 */
 
-    *(GPIO_PORTC_DATA_BITS_R + DATA_REGISTER_OFFSET) = ((*(GPIO_PORTC_DATA_BITS_R + DATA_REGISTER_OFFSET)) & 0x0F) | ((command & 0x0F) << 4);
+    GPIO_PORTC_DATA_R = (GPIO_PORTC_DATA_R & 0x0F) | ((command & 0x0F) << 4);
 
 
     Delay(610); /* delay for processing Tdsw = 100ns */
@@ -116,7 +116,7 @@ void LCD_displayCharacter(uint8_t data)
     GPIO_WritePin(GPIO_PORTA_DATA_BITS_R,E,HIGH);
     Delay(610); /* delay for processing Tpw - Tdws = 190ns */
 
-    *(GPIO_PORTC_DATA_BITS_R + DATA_REGISTER_OFFSET) = ((*(GPIO_PORTC_DATA_BITS_R + DATA_REGISTER_OFFSET)) & 0x0F) | (data & 0xF0);
+    GPIO_PORTC_DATA_R = (GPIO_PORTC_DATA_R & 0x0F) | (data & 0xF0);
 
 
     Delay(610); /* delay for processing Tdsw = 100ns */
@@ -126,7 +126,7 @@ void LCD_displayCharacter(uint8_t data)
     Delay(610); /* delay for processing Tpw - Tdws = 190ns */
 
     /* out the lowest 4 bits of the required data to the data bus D4 --> D7 */
-    *(GPIO_PORTC_DATA_BITS_R + DATA_REGISTER_OFFSET) = ((*(GPIO_PORTC_DATA_BITS_R + DATA_REGISTER_OFFSET)) & 0x0F) | ((data & 0x0F) << 4);
+    GPIO_PORTC_DATA_R = (GPIO_PORTC_DATA_R & 0x0F) | ((data & 0x0F) << 4);
 
     Delay(610); /* delay for processing Tdsw = 100ns */
     GPIO_WritePin(GPIO_PORTA_DATA_BITS_R,E,LOW);
